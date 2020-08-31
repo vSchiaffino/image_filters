@@ -4,8 +4,7 @@
 #include <sstream>
 #include <exception>
 #include <vector>
-
-#include "ppm.h"
+#include "../h/ppm.h"
 
 
 unsigned char truncate_pixel(float color)

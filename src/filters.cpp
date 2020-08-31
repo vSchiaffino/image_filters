@@ -2,18 +2,16 @@
 #include <string>
 #include <stdlib.h>
 #include <math.h>       /* sqrt */
+#include "../h/filters.h"
 #include <vector>
-#include "filters.h"
-#include <Windows.h>
-#include <atomic>
-#include <thread>
+#include <thread>  
+#include <atomic>  
 
 #define BLACK 0
 
 using namespace std;
 
 // COMPLETAR :)
-
 
 void blackWhite(ppm& img) {
 	for (size_t i = 0; i < img.height; i++)
@@ -31,21 +29,17 @@ void blackWhite(ppm& img) {
 	}
 }
 
-unsigned int f(float c, unsigned int value) {
-	return (259 * (c + 255)) / (255 * (259 - c)) * value;
-}
-
 void contrast(ppm& img, float contrast) {
-	// esta mal esto
+	float f = (259 * (contrast + 255)) / (255 * (259 - contrast));
 	for (size_t i = 0; i < img.height; i++)
 	{
 		for (size_t j = 0; j < img.width; j++)
 		{
 			pixel p = img.getPixel(i, j);
 			pixel* pixelResultante = new pixel();
-			pixelResultante->r = f(contrast, p.r - 128) + 128;
-			pixelResultante->g = f(contrast, p.g - 128) + 128;
-			pixelResultante->b = f(contrast, p.b - 128) + 128;
+			pixelResultante->r = f * (p.r - 128) + 128;
+			pixelResultante->g = f * (p.g - 128) + 128;
+			pixelResultante->b = f * (p.b - 128) + 128;
 			pixelResultante->truncate();
 			img.setPixel(i, j, *pixelResultante);
 			
@@ -139,7 +133,8 @@ void frame(ppm& img, pixel color, int _x) {
 	}
 };
 
-void zoom(ppm &img, ppm &img_zoomed, int z) {
+void zoom(ppm &img, int z) {
+    ppm img_zoomed(img.width * z, img.height * z);
 	for (size_t i = 0; i < img.height; i++)
 	{
 		for (size_t j = 0; j < img.width; j++)
@@ -158,6 +153,7 @@ void zoom(ppm &img, ppm &img_zoomed, int z) {
 			}
 		}
 	}
+    img = img_zoomed;
 };
 
 void boxBlur(ppm &img) {
@@ -188,7 +184,8 @@ void boxBlur(ppm &img) {
 	img = new_image;
 };
 
-void edgeDetection(ppm &img, ppm &img_target) {
+void edgeDetection(ppm &img) {
+    ppm img_target(img.width - 2, img.height - 2);
 	for (size_t i = 1; i < img.height - 1; i++)
 	{
 		for (size_t j = 1; j < img.width - 1; j++)
@@ -220,6 +217,7 @@ void edgeDetection(ppm &img, ppm &img_target) {
 			img_target.setPixel(i - 1, j - 1, p_final);
 		}
 	}
+    img = img_target;
 }
 
 void crop(ppm &img, int k, int t){
