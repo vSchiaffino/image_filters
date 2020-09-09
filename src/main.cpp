@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <stdlib.h>
 #include <vector>
@@ -14,7 +15,7 @@ void ShowHelp(string s);
 
 int main(int argc , char* argv[]){
 	// cout << argc << endl;
-	string out = "/home/valen/Escritorio/mastropalta/filters/out/out.ppm";
+	string out = "/home/valen/Escritorio/mastropalta/image_filters/out/out.ppm";
 	// pidio help
 	// cout << "Uso: ./tp <filtro> <nthreads> <p1> <p2> <img1> <img2>" << endl;
 	if(argc == 1){
@@ -115,7 +116,14 @@ int main(int argc , char* argv[]){
 
 		cout << "Escribiendo imagen..." << endl;
 		img.write(out);
-		cout << "Listo." << endl;		
+		cout << "Listo." << endl;
+		// n, t, w
+		ofstream file;
+		file.open("/home/valen/Escritorio/mastropalta/image_filters/out/stats.csv", ios::app);
+		string out = to_string(nThreads) + "," + to_string(accum) + "," + to_string(img.height * img.width) + "\n";
+		cout << "Printeando esto: " << out;
+		file << out;
+		file.close();
 	}
 	// Pasamos 0 en caso de no utilizar p2 o  "" en img2
 	// if(string(argv[1]) == "-help")
